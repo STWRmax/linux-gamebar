@@ -1,9 +1,7 @@
-import sys
-from PyQt5.QtWidgets import QApplication
-from ui.main_window import GameBar  # Importa la interfaz
+from ui.floating_hud import FloatingHUD
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = GameBar()
-    window.show()
-    sys.exit(app.exec_())
+app = QApplication(sys.argv)
+window = MainWindow()
+hud = FloatingHUD()
+hud.show()
+sys.exit(app.exec_())
