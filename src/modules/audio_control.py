@@ -9,5 +9,8 @@ def list_audio_apps():
             apps.append(app_name)
     return apps
 
+def change_volume(amount):
+    subprocess.run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", f"{amount}%"])
+
 def change_app_volume(app_id, amount):
     subprocess.run(["pactl", "set-sink-input-volume", str(app_id), f"{amount}%"])
