@@ -1,21 +1,14 @@
 import sys
 from PyQt5.QtWidgets import QApplication
-from src.ui.main_window import GameBarWindow
-from src.keyboard_listener import HotkeyManager
+
+# Importar desde subcarpetas de src
+from ui.main_window import GameBarWindow
+# Si necesitas algo de modules, ej: from modules.audio_control import change_volume
 
 def main():
     app = QApplication(sys.argv)
-    
-    # Iniciar ventana y teclas rápidas
-    hotkeys = HotkeyManager()
-    hotkeys.gamebar.show()
-    
-    # Ejecutar en un hilo separado (opcional)
-    import threading
-    thread = threading.Thread(target=hotkeys.run)
-    thread.daemon = True
-    thread.start()
-    
+    window = GameBarWindow()
+    window.show()
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
