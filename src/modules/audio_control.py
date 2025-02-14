@@ -1,16 +1,25 @@
-import subprocess
+import pulsectl
 
-def list_audio_apps():
-    result = subprocess.run(["pactl", "list", "sink-inputs"], capture_output=True, text=True)
-    apps = []
-    for line in result.stdout.split("\n"):
-        if "application.name" in line:
-            app_name = line.split("=")[1].strip('"')
-            apps.append(app_name)
-    return apps
-
-def change_volume(amount):
-    subprocess.run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", f"{amount}%"])
-
-def change_app_volume(app_id, amount):
-    subprocess.run(["pactl", "set-sink-input-volume", str(app_id), f"{amount}%"])
+class AudioControl:
+    @staticmethod
+    def get_current_volume(app_name=None):
+        with pulsectl.Pulse('gamebar-audio') as pulse:
+            if app_name:
+                for sink in pulse.sink_input_list():
+                    if sink.proplist.get('application.name') == app_name:
+                        return round(sink.volume.value_flat * 100)
+            else:
+                sink = pulse.get_sink_by_name('@DEFAULT_SINK@')
+                return round(sink.volume.value_flat * 100)
+    
+    @staticmethod
+    def set_volume(volume_percent, app_name=None):
+        with pulsectl.Pulse('gamebar-audio') as pulse:
+            volume = volume_percent / 100
+            if app_name:
+                for sink in pulse.sink_input_list():
+                    if sink.proplist.get('application.name') == app_name:
+                        pulse.volume_set_all_chans(sink, volume)
+            else:
+                sink = pulse.get_sink_by_name('@DEFAULT_SINK@')
+                pulse.volume_set_all_chans(sink, volume)

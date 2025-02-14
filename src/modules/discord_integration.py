@@ -1,12 +1,24 @@
 from pypresence import Presence
-import notify2
+import time
 
-def connect_discord():
-    client_id = "123456789012345678"
-    RPC = Presence(client_id)
-    RPC.connect()
-    RPC.update(state="Jugando en Linux", details="Usando Game Bar")
-    
-    notify2.init("Game Bar")
-    notification = notify2.Notification("Discord Conectado", "Ahora estás conectado a Discord.")
-    notification.show()
+class DiscordRPC:
+    def __init__(self, client_id):
+        self.client_id = client_id
+        self.rpc = None
+        
+    def connect(self):
+        try:
+            self.rpc = Presence(self.client_id)
+            self.rpc.connect()
+            return True
+        except:
+            return False
+            
+    def update_presence(self, details, state):
+        if self.rpc:
+            self.rpc.update(
+                details=details,
+                state=state,
+                start=int(time.time()),
+                large_image="gamebar_icon"
+            )

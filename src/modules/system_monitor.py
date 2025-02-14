@@ -1,17 +1,29 @@
 import psutil
-import speedtest
+import py3nvml.py3nvml as nvml
 
-def get_fps():
-    return "FPS: 60 (Simulado)"
-
-def get_ram_usage():
-    return f"RAM: {psutil.virtual_memory().percent}%"
-
-def get_gpu_usage():
-    return "GPU: 40% (Simulado)"
-
-def get_network_speed():
-    st = speedtest.Speedtest()
-    download = round(st.download() / 1_000_000, 2)
-    upload = round(st.upload() / 1_000_000, 2)
-    return f"📥 {download} Mbps / 📤 {upload} Mbps"
+class SystemMonitor:
+    @staticmethod
+    def get_cpu_usage():
+        return psutil.cpu_percent(interval=1)
+    
+    @staticmethod
+    def get_ram_usage():
+        return psutil.virtual_memory().percent
+    
+    @staticmethod
+    def get_gpu_usage():
+        try:
+            nvml.nvmlInit()
+            handle = nvml.nvmlDeviceGetHandleByIndex(0)
+            util = nvml.nvmlDeviceGetUtilizationRates(handle)
+            return util.gpu
+        except:
+            return 0  # Si no hay GPU NVIDIA
+        
+    @staticmethod
+    def get_network_speed():
+        net_io = psutil.net_io_counters()
+        return {
+            "upload": net_io.bytes_sent,
+            "download": net_io.bytes_recv
+        }

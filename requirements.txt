@@ -1,0 +1,6 @@
+PyQt5==5.15.9
+psutil==5.9.5
+pulsectl==22.3.2  # Para control de audio por aplicación
+keyboard==0.13.5
+pypresence==4.3.0
+py3nvml==0.2.7    # Monitoreo de GPU NVIDIA

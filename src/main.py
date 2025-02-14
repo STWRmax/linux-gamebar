@@ -1,11 +1,22 @@
 import sys
 from PyQt5.QtWidgets import QApplication
-from ui.main_window import MainWindow
-from ui.floating_hud import FloatingHUD
+from src.ui.main_window import GameBarWindow
+from src.keyboard_listener import HotkeyManager
 
-app = QApplication(sys.argv)
-window = MainWindow()
-hud = FloatingHUD()
-window.show()
-hud.show()
-sys.exit(app.exec_())
+def main():
+    app = QApplication(sys.argv)
+    
+    # Iniciar ventana y teclas rápidas
+    hotkeys = HotkeyManager()
+    hotkeys.gamebar.show()
+    
+    # Ejecutar en un hilo separado (opcional)
+    import threading
+    thread = threading.Thread(target=hotkeys.run)
+    thread.daemon = True
+    thread.start()
+    
+    sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    main()
